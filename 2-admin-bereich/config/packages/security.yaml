@@ -19,12 +19,22 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-#    form_login und logout Konfiguration
-#    form_login:
-#        check_path: security_login
-#        login_path: security_login
-#        csrf_token_generator: security.csrf.token_manager
-#        default_target_path: blog_index
-#    logout:
-#        path: security_logout
-#        target: homepage
+        main:
+            # Catch all routes
+            pattern: ^/
+            # Allow general anonymous access
+            anonymous: true
+            # form_login und logout Konfiguration
+            form_login:
+                check_path: security_login
+                login_path: security_login
+                csrf_token_generator: security.csrf.token_manager
+                default_target_path: blog_index
+            logout:
+                path: security_logout
+                target: homepage
+    access_control:
+        # require ROLE_ADMIN to create new posts
+        - { path: '^/(%app_locales%)/admin/post/new', roles: ROLE_ADMIN }
+        # require ROLE_USER for access to backend
+        - { path: '^/(%app_locales%)/admin', roles: ROLE_USER }
