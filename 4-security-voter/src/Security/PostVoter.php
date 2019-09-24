@@ -43,6 +43,7 @@ class PostVoter extends Voter
 
     /**
      * {@inheritdoc}
+     * @param Post $post
      */
     protected function voteOnAttribute($attribute, $post, TokenInterface $token): bool
     {
@@ -53,9 +54,14 @@ class PostVoter extends Voter
             return false;
         }
 
-        // the logic of this voter is pretty simple: if the logged user is the
-        // author of the given blog post, grant permission; otherwise, deny it.
-        // (the supports() method guarantees that $post is a Post object)
-        return $user === $post->getAuthor();
+        switch ($attribute) {
+            case self::DELETE:
+            case self::EDIT:
+                return $user === $post->getAuthor() || in_array('ROLE_ADMIN', $user->getRoles(), true) || 'Bernhard Kau' === $user->getFullName();
+            case self::SHOW:
+                return true;
+        }
+
+        return false;
     }
 }
